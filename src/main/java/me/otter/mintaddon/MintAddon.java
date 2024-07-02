@@ -16,7 +16,7 @@ public class MintAddon extends Addon {
     public static final String ID = "mintaddon";
     public static final String NAME = "Mint Addon";
     public static final String DESCRIPTION = "$wag Boze Addon";
-    public static final String VERSION = "1.0.3";
+    public static final String VERSION = "1.0.4";
 
     public static final MintAddon INSTANCE = new MintAddon();
     public static final Logger LOG = LogManager.getLogger();

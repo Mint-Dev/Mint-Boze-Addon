@@ -78,7 +78,7 @@ public class AntiPistonPush extends ToggleableModule {
 
         if(mode.getValue() == 0) { //block
             int bestslot = -1;
-            bestslot = InventoryUtils.getItemfromHotbar(Items.OBSIDIAN);
+            bestslot = InventoryUtils.findItemInHotbar(Items.OBSIDIAN);
             placelocation = null;
             placelocation = getplacelocation();
 

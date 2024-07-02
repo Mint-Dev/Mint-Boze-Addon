@@ -14,21 +14,21 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.explosion.Explosion;
 
 public class DamageUtils {
-
-    //skidded
+    // Function to calculate explosion damage
     public static float getExplosionDamage(Vec3d explosionPos, float power, LivingEntity target) {
-
         if (mc.world.getDifficulty() == Difficulty.PEACEFUL)
             return 0f;
 
         double maxDist = power * 2;
-        if (!mc.world.getOtherEntities(null, new Box(
+        Box explosionBox = new Box(
                 MathHelper.floor(explosionPos.x - maxDist - 1.0),
                 MathHelper.floor(explosionPos.y - maxDist - 1.0),
                 MathHelper.floor(explosionPos.z - maxDist - 1.0),
                 MathHelper.floor(explosionPos.x + maxDist + 1.0),
                 MathHelper.floor(explosionPos.y + maxDist + 1.0),
-                MathHelper.floor(explosionPos.z + maxDist + 1.0))).contains(target)) {
+                MathHelper.floor(explosionPos.z + maxDist + 1.0));
+
+        if (!mc.world.getOtherEntities(null, explosionBox).contains(target)) {
             return 0f;
         }
 
@@ -53,20 +53,18 @@ public class DamageUtils {
                         }
                     }
 
-                    // Armor
-                    toDamage = DamageUtil.getDamageLeft(toDamage, target.getArmor(),
-                            (float) target.getAttributeInstance(EntityAttributes.GENERIC_ARMOR_TOUGHNESS).getValue());
+                    // Armor reduction
+                    toDamage = DamageUtil.getDamageLeft(toDamage, mc.world.getDamageSources().explosion(null, null),
+                            (float) target.getArmor(), (float) target.getAttributeInstance(EntityAttributes.GENERIC_ARMOR_TOUGHNESS).getValue());
 
-                    // Enchantments
+                    // Enchantment reduction
                     if (target.hasStatusEffect(StatusEffects.RESISTANCE)) {
                         int resistance = 25 - (target.getStatusEffect(StatusEffects.RESISTANCE).getAmplifier() + 1) * 5;
-                        float resistance_1 = toDamage * resistance;
-                        toDamage = Math.max(resistance_1 / 25f, 0f);
+                        float resistanceReduction = toDamage * resistance;
+                        toDamage = Math.max(resistanceReduction / 25f, 0f);
                     }
 
-                    if (toDamage <= 0f) {
-                        toDamage = 0f;
-                    } else {
+                    if (toDamage > 0f) {
                         int protAmount = EnchantmentHelper.getProtectionAmount(target.getArmorItems(), mc.world.getDamageSources().explosion(null, null));
                         if (protAmount > 0) {
                             toDamage = DamageUtil.getInflictedDamage(toDamage, protAmount);
@@ -80,5 +78,4 @@ public class DamageUtils {
 
         return 0f;
     }
-
 }

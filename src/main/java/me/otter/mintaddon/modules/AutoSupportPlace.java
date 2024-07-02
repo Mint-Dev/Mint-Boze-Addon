@@ -100,8 +100,11 @@ AutoSupportPlace extends ToggleableModule{
     @EventHandler
     public void onUpdate(EventPlayerUpdate eventPlayerUpdate) {
 
-        if(firstBlockPlaced) {
+        if (firstBlockPlaced && placem.getValue() == 0) {
             delayCounter++;
+            if (delayCounter < placedelay.getValue()) {
+                return;
+            }
         }
 
         target = getBestTarget();
@@ -112,7 +115,7 @@ AutoSupportPlace extends ToggleableModule{
 
         targetname = target.getGameProfile().getName();
         obbyslot = -1;
-        obbyslot = InventoryUtils.getItemfromHotbar(Items.OBSIDIAN);
+        obbyslot = InventoryUtils.findItemInHotbar(Items.OBSIDIAN);
 
         if(getBestPlaceLocation() == null || obbyslot == -1) {
             return;
@@ -123,14 +126,9 @@ AutoSupportPlace extends ToggleableModule{
             return;
         }
 
-        if (delayCounter < placedelay.getValue() && firstBlockPlaced) {
-            return;
-        }
-
         if (!nogoodobbyaroundtarget() && waitForNeed.getValue()) {
             return;
         }
-
 
         if(wait.getValue() && eventPlayerUpdate.isBozeInteracting()) {
             return;
